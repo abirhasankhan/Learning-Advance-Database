@@ -1,0 +1,112 @@
+/***01***/
+
+-- Define an object type for books
+CREATE OR REPLACE TYPE Assessment AS OBJECT (
+    types VARCHAR2(10),
+    co VARCHAR2(10),
+    marks NUMBER
+);
+/
+
+CREATE TABLE student (
+  id VARCHAR2(20),
+  mark Assessment
+)
+/
+
+INSERT INTO student (id, mark) 
+VALUES (
+    '2019-1-60-013', 
+    Assessment(
+        'mid1',
+        'co2', 
+        30)
+);
+
+
+DECLARE
+    std VARCHAR2(20);
+    std_types VARCHAR2(10);
+    std_co VARCHAR2(20);
+    std_marks  NUMBER;
+    CURSOR S_student IS
+        SELECT st.id, st.mark.types, st.mark.co, st.mark.marks
+        FROM student st;
+BEGIN
+    OPEN S_student;
+    LOOP
+        FETCH S_student INTO std, std_types, std_co, std_marks;
+        EXIT WHEN S_student%notfound;
+        DBMS_OUTPUT.PUT_LINE('ID: ' || std);
+        DBMS_OUTPUT.PUT_LINE('Type: ' || std_types);
+        DBMS_OUTPUT.PUT_LINE('CO: ' || std_co);
+        DBMS_OUTPUT.PUT_LINE('Marks: ' || std_marks);
+        END LOOP;
+    CLOSE S_student;
+END;
+/
+
+
+/***02***/
+
+CREATE OR REPLACE TYPE COList AS TABLE OF VARCHAR2(20);
+/
+CREATE OR REPLACE TYPE MarksList AS TABLE OF NUMBER(10);
+/
+
+
+-- Define an object type for books
+CREATE OR REPLACE TYPE Assessment AS OBJECT (
+    types VARCHAR2(10),
+    co COList,
+    marks MarksList
+);
+/
+
+CREATE TABLE student (
+  id VARCHAR2(20),
+  mark Assessment
+) NESTED TABLE mark.co STORE AS co_nested
+  NESTED TABLE mark.marks STORE AS marks_nested;
+/
+
+INSERT INTO student (id, mark) 
+VALUES (
+    '2019-1-60-013', 
+    Assessment(
+        'mid1',
+        COList('co1', 'co2'), 
+        MarksList(10, 30))
+);
+
+
+DECLARE
+    std VARCHAR2(20);
+    std_types VARCHAR2(10);
+    std_co VARCHAR2(20);
+    std_marks  NUMBER(10);
+    CURSOR S_student IS
+        SELECT
+        st.id, 
+        st.mark.types, 
+        t1.COLUMN_VALUE AS co,
+        t2.COLUMN_VALUE AS mark
+    FROM student st,
+        TABLE(st.mark.co) t1,
+        TABLE(st.mark.marks) t2;
+
+BEGIN
+    OPEN S_student;
+    LOOP
+        FETCH S_student INTO std, std_types, std_co, std_marks;
+        EXIT WHEN S_student%notfound;
+        DBMS_OUTPUT.PUT_LINE('ID: ' || std);
+        DBMS_OUTPUT.PUT_LINE('Type: ' || std_types);
+        DBMS_OUTPUT.PUT_LINE('CO: ' || std_co);
+        DBMS_OUTPUT.PUT_LINE('Marks: ' || std_marks);
+        END LOOP;
+    CLOSE S_student;
+END;
+/
+
+

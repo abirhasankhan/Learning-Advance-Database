@@ -1,0 +1,8 @@
+******on CMD******
+first go to the file, where the .sql file is save. Then on CMD use cd command and go to that folder and then run sqlplus command.
+
+set serveroutput on
+@test01.sql
+
+****For Oracle App********
+Oracle -> Go to DataBase Home Page -> SQL -> SQL command

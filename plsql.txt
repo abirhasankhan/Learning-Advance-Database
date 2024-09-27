@@ -1,0 +1,145 @@
+DECLARE
+*****************
+BEGIN
+***************
+END
+/
+-------------------------------
+DECLARE
+	a NUMBER:=: a;
+	b NUMBER:=: b;
+	c NUMBER;
+	d NUMBER;
+	e NUMBER;
+	
+BEGIN
+	c:= a+b;
+	d:= MOD(a,b);
+	dbms_output.put_line('Value of d: ' || d);
+	
+	e:= MOD(a,2);
+	
+	IF(e=0) THEN
+		dbms_output.put_line('e is even');
+	ElSE
+		dbms_output.put_line('e is odd');
+	END IF;
+	
+END;
+/
+----------------------
+#if n = 10. print 1,3,5,7,9.  For loop
+DECLARE
+	i NUMBER:= 1;
+	j NUMBER:= 1;
+BEGIN
+	FOR i IN 1..3 LOOP
+		FOR j IN 1..3 LOOP
+			dbms_output.put_line('Value of i ' || i || 'Value of j ' || j);
+		END LOOP;
+	END LOOP;
+	
+END;
+/
+---------------------- 
+#while loop
+DECLARE
+	i NUMBER:= 10;
+BEGIN
+	WHILE i<20 LOOP
+		dbms_output.put_line(i);
+		i:=i+5;
+	END LOOP;
+END;
+/
+
+--------------------------------------
+#Procedure
+
+DECLARE
+	a NUMBER;
+	
+PROCEDURE sqNumber(x IN OUT NUMBER) AS
+BEGIN
+	x:=x*x;
+END;
+
+BEGIN
+	a:=5;
+	sqNumber(a);
+	dbms_output.put_line(a);
+END;
+/
+--------------------------------------------------
+CREATE FUNCTION get_bal(acc_no IN NUMBER) 
+   RETURN NUMBER 
+   IS acc_bal NUMBER(11,2);
+   BEGIN 
+      SELECT order_total 
+      INTO acc_bal 
+      FROM orders 
+      WHERE customer_id = acc_no; 
+      RETURN(acc_bal); 
+    END;
+/
+---------------------------------------
+DECLARE
+    a NUMBER;
+    b NUMBER;
+    c NUMBER;
+
+    FUNCTION findMax(x IN NUMBER, y IN NUMBER)
+        RETURN NUMBER AS
+        z NUMBER;
+    BEGIN
+        IF (x > y) THEN
+            z := x;
+        ELSE
+            z := y;
+        END IF;
+        RETURN z;
+    END;
+
+BEGIN
+    a := 5;
+    b := 7;
+    c := findMax(a, b);
+    dbms_output.put_line(c);
+END;
+/
+-------------------------------------------------------
+DECLARE
+
+type namesarray IS VARRAY(5) OF VARCHAR2(10);
+
+type grades IS VARRAY(5) OF INTEGER;
+
+names namesarray;
+
+marks grades;
+
+total integer;
+
+BEGIN
+
+names := namesarray('Kavita', 'Pritam', 'Ayan', 'Rishav', 'Aziz');
+
+marks:= grades(98, 97, 78, 87, 92);
+
+total := names.count;
+
+dbms_output.put_line('Total '|| total || ' Students');
+
+FOR i in 1 .. total LOOP
+
+dbms_output.put_line('Student: ' || names(i) || '
+
+Marks: ' || marks(i));
+
+END LOOP;
+
+END;
+
+/
+
+-----------------------------------------------------------------

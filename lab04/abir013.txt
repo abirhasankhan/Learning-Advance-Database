@@ -1,0 +1,120 @@
+##create table
+
+CREATE TABLE Suppliers (
+sid VARCHAR(11) NOT NULL,
+sname VARCHAR(20),
+city VARCHAR(30),
+PRIMARY KEY (sid)
+);
+
+##
+CREATE TABLE Parts(
+pid VARCHAR(11) NOT NULL,
+pname VARCHAR(20),
+color VARCHAR(20),
+price NUMBER,
+PRIMARY KEY (pid)
+);
+
+##
+CREATE TABLE Shipments(
+sid VARCHAR(11) NOT NULL,
+pid VARCHAR(11) NOT NULL,
+quantity NUMBER,
+PRIMARY KEY (sid,pid),
+FOREIGN KEY (sid) REFERENCES Suppliers(sid),
+FOREIGN KEY (pid) REFERENCES Parts(pid)
+);
+
+##insert table
+##insert Suppliers
+INSERT INTO Suppliers VALUES ('s01', 'Abir', 'Badda');
+INSERT INTO Suppliers VALUES ('s02', 'Hasan', 'Banani');
+INSERT INTO Suppliers VALUES ('s03', 'Rahat', 'Gulshan');
+
+##insert Parts
+INSERT INTO Parts VALUES ('p01', 'CPU', 'Black', 15000);
+INSERT INTO Parts VALUES ('p02', 'GPU', 'Green', 25000);
+INSERT INTO Parts VALUES ('p03', 'RAM', 'Red', 5000);
+
+
+##insert Shipments
+INSERT INTO Shipments VALUES ('s01', 'p03', 5);
+INSERT INTO Shipments VALUES ('s02', 'p02', 4);
+INSERT INTO Shipments VALUES ('s03', 'p01', 7);
+
+
+##qus01 code
+DECLARE
+   p_id Parts.pid%type;
+   p_name Parts.pname%type;
+   p_color Parts.color%type;
+   p_price Parts.price%type;
+BEGIN
+
+   SELECT pid, pname, color, price INTO p_id,    p_name, p_color, p_price  
+   FROM Parts
+   WHERE price = (SELECT  max(price) FROM Parts);
+   dbms_output.put_line
+   ('ID ' ||p_id|| ' Name ' || p_name  || ' Color ' || p_color || ' Price ' || p_price);
+END;
+/
+
+##01
+DECLARE
+   p_id Parts.pid%type;
+   p_name Parts.pname%type;
+   p_color Parts.color%type;
+   p_price Parts.price%type;
+   CURSOR p_parts is
+      SELECT pid, pname, color, price
+      FROM Parts
+      WHERE price = (SELECT  max(price) FROM Parts);
+BEGIN
+   OPEN p_parts;
+   LOOP
+   FETCH p_parts into p_id, p_name, p_color, p_price;
+      EXIT WHEN p_parts%notfound;
+      dbms_output.put_line('ID ' ||p_id|| ' Name ' || p_name  || ' Color ' || p_color || ' Price ' || p_price);
+   END LOOP;
+   CLOSE p_parts;
+END;
+/
+
+
+##02
+DECLARE
+   p_id Parts.pid%type;
+   p_name Parts.pname%type;
+   p_price Parts.price%type;
+   s_id Suppliers.sid%type;
+   s_name Suppliers.sname%type;
+   s_city Suppliers.city%type;  
+   CURSOR costly_parts is
+SELECT Parts.pid, Parts.pname, Parts.price, Suppliers.sid, Suppliers.sname, Suppliers.city
+FROM Shipments INNER JOIN Suppliers ON Shipments.sid=Suppliers.sid
+        INNER JOIN Parts ON Shipments.pid=Parts.pid
+WHERE Parts.price = (SELECT  max(price) FROM Parts);
+   CURSOR cheap_parts is
+SELECT Parts.pid, Parts.pname, Parts.price, Suppliers.sid, Suppliers.sname, Suppliers.city
+FROM Shipments INNER JOIN Suppliers ON Shipments.sid=Suppliers.sid
+        INNER JOIN Parts ON Shipments.pid=Parts.pid
+WHERE Parts.price = (SELECT  min(price) FROM Parts);  
+BEGIN
+   OPEN costly_parts;
+   LOOP
+   FETCH costly_parts into p_id, p_name, p_price, s_id, s_name, s_city;
+      EXIT WHEN costly_parts%notfound;
+      dbms_output.put_line('Parts ID ' ||p_id|| ' Parts Name ' || p_name  || ' Price ' || p_price || 'Suppliers ID ' || s_id || 'Suppliers Name ' || s_name  || ' City' || s_city);
+   END LOOP;
+   CLOSE costly_parts;
+
+   OPEN cheap_parts;
+   LOOP
+   FETCH cheap_parts into p_id, p_name, p_price, s_id, s_name, s_city;
+      EXIT WHEN cheap_parts%notfound;
+      dbms_output.put_line('Parts ID ' ||p_id|| ' Parts Name ' || p_name  || ' Price ' || p_price || 'Suppliers ID ' || s_id || 'Suppliers Name ' || s_name  || ' City' || s_city);
+   END LOOP;
+   CLOSE cheap_parts;
+END;
+/
