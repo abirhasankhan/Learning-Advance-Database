@@ -32,6 +32,7 @@ This project presents the design and implementation of a comprehensive database 
 - [How to Use](#how-to-use)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
+- [Simple Diagram Screenshot](#simple-diagram-screenshot)
 
 
 
@@ -84,6 +85,10 @@ This Movie Review Site Database serves as a robust foundation for a user-friendl
 1. **Database Setup**: Import the database schema into your database management system (DBMS).
 2. **Data Insertion**: Insert sample data or populate the tables with your own data.
 3. **Queries**: Use SQL queries to interact with the database, retrieving movie information, user reviews, and other relevant data.
+
+## Simple Diagram Screenshot
+
+<img src="./Project SQL/ER model.PNG" alt="Project" />
 
 ## License
 
