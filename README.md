@@ -88,7 +88,7 @@ This Movie Review Site Database serves as a robust foundation for a user-friendl
 
 ## Simple Diagram Screenshot
 
-<img src="./Project SQL/ER model.PNG" alt="Project" />
+<img src="./Movie Review Site diagram.webp" alt="Project" />
 
 ## License
 
